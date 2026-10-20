@@ -1,0 +1,100 @@
+Table campus {
+  campus_id    int     [pk]
+  name         string
+  email_domain string
+}
+
+Table users {
+  user_id       int     [pk]
+  campus_id     int     [ref: > campus.campus_id]
+  school_email  string
+  password_hash string
+  full_name     string
+  role          string
+  student_no    string
+  is_verified   boolean
+}
+
+Table store {
+  store_id     int     [pk]
+  campus_id    int     [ref: > campus.campus_id]
+  owner_id     int     [ref: > users.user_id]
+  display_name string
+  rating_avg   decimal
+}
+
+Table category {
+  category_id int     [pk]
+  parent_id   int     [ref: > category.category_id]
+  name        string
+}
+
+Table product {
+  product_id  int     [pk]
+  store_id    int     [ref: > store.store_id]
+  category_id int     [ref: > category.category_id]
+  title       string
+  description text
+  image_url   string
+  price       decimal
+  stock_qty   int
+  status      string
+}
+
+Table cart {
+  cart_id    int       [pk]
+  user_id    int       [ref: > users.user_id]
+  updated_at timestamp
+}
+
+Table cart_item {
+  cart_item_id int [pk]
+  cart_id      int [ref: > cart.cart_id]
+  product_id   int [ref: > product.product_id]
+  quantity     int
+}
+
+Table orders {
+  order_id     int       [pk]
+  buyer_id     int       [ref: > users.user_id]
+  store_id     int       [ref: > store.store_id]
+  total_amount decimal
+  status       string
+  placed_at    timestamp
+}
+
+Table order_item {
+  order_item_id int     [pk]
+  order_id      int     [ref: > orders.order_id]
+  product_id    int     [ref: > product.product_id]
+  quantity      int
+  unit_price    decimal
+}
+
+Table payment {
+  payment_id     int       [pk]
+  order_id       int       [ref: > orders.order_id]
+  amount         decimal
+  payment_method string
+  status         string
+  collected_at   timestamp
+  confirmed_by   int       [ref: > users.user_id]
+}
+
+Table delivery {
+  delivery_id         int       [pk]
+  order_id            int       [ref: > orders.order_id]
+  pickup_location     string
+  scheduled_at        timestamp
+  seller_confirmed_at timestamp
+  buyer_confirmed_at  timestamp
+  status              string
+}
+
+Table review {
+  review_id     int  [pk]
+  order_item_id int  [ref: > order_item.order_item_id]
+  reviewer_id   int  [ref: > users.user_id]
+  rating        int
+  comment       text
+}
